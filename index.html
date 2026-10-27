@@ -6,7 +6,7 @@
 <meta name="description" content="질문 여섯 개에 답하면 나를 복구하는 단어 12개를 발급해드려요.">
 <meta property="og:title" content="나의 인생 시드 문구">
 <meta property="og:description" content="질문 여섯 개에 답하면 나를 복구하는 단어 12개를 발급해드려요.">
-<meta name="theme-color" content="#FBF8F8">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,11 +21,11 @@
 body { margin: 0; }
 :root {
   padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
-  --bg: #FBF8F8;
+  --bg: #FFFFFF;
   --surface: #FFFFFF;
   --chip: rgba(255,255,255,.55);
   --glass: rgba(255,255,255,.26);
-  --glass-line: rgba(255,255,255,.6);
+  --glass-line: rgba(120,90,100,.12);
   --line: #EADFE1;
   --fg: #121014;
   --muted: #7A6F74;
@@ -53,7 +53,7 @@ body {
 .bgfx .b { width: 60vmax; height: 60vmax; right: -30vmax; top: 15vh; background: var(--p-lilac); animation: f2 24s ease-in-out infinite alternate; }
 .bgfx .c { width: 65vmax; height: 50vmax; left: -20vmax; bottom: -22vmax; background: var(--p-butter); animation: f3 28s ease-in-out infinite alternate; }
 .bgfx .d { width: 50vmax; height: 45vmax; right: -15vmax; bottom: -10vmax; background: var(--p-peach); animation: f4 18s ease-in-out infinite alternate; }
-.bgfx .e { width: 44vmax; height: 38vmax; left: 20%; top: 36%; background: rgba(236,58,76,.42); animation: f2 30s ease-in-out infinite alternate-reverse; }
+.bgfx .e { width: 44vmax; height: 38vmax; left: 20%; top: 62%; background: rgba(236,58,76,.32); animation: f2 30s ease-in-out infinite alternate-reverse; }
 @keyframes f1 { to { transform: translate(8vmax, 6vmax) scale(1.08); } }
 @keyframes f2 { to { transform: translate(-10vmax, -5vmax) scale(.92); } }
 @keyframes f3 { to { transform: translate(10vmax, -6vmax) scale(1.1); } }
@@ -96,7 +96,7 @@ h1 { font-size: 28px; line-height: 1.3; font-weight: 700; margin: 28px 0 12px; t
 .word .n { width: 20px; flex: none; text-align: center; font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .word .w {
   flex: 1; min-width: 0; height: 46px; border-radius: 23px; display: grid; place-items: center;
-  background: rgba(255,255,255,.4); font-size: 15px; font-weight: 600; white-space: nowrap;
+  background: rgba(240,232,235,.5); font-size: 15px; font-weight: 600; white-space: nowrap;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .word .w span { filter: blur(7px); opacity: .7; transition: filter .7s var(--ease), opacity .7s var(--ease); transition-delay: var(--d, 0s); }
@@ -182,7 +182,7 @@ h1 { font-size: 28px; line-height: 1.3; font-weight: 700; margin: 28px 0 12px; t
 <body>
 
 <div class="rise-glow" aria-hidden="true"></div>
-<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i><i class="e"></i></div>
+<div class="bgfx" aria-hidden="true"><i class="c"></i><i class="d"></i><i class="e"></i></div>
 <div class="app" id="app"></div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -338,8 +338,8 @@ async function saveImage(s) {
   c.width = W; c.height = H;
   const x = c.getContext("2d"), F = getComputedStyle(document.body).fontFamily;
   const lg = x.createLinearGradient(0, 0, 0, H);
-  x.fillStyle = "#FBF8F8"; x.fillRect(0, 0, W, H);
-  [["#F9B9CF", 100, 100, 800], ["#E9D6F3", 1050, 500, 700], ["#F7EAB4", 120, 1350, 750], ["#FFD2C0", 1000, 1300, 650], ["rgba(236,58,76,.32)", 450, 750, 520]].forEach(([c, cx, cy, r]) => {
+  x.fillStyle = "#FFFFFF"; x.fillRect(0, 0, W, H);
+  [["#F7EAB4", 120, 1450, 700], ["#FFD2C0", 1000, 1400, 650], ["rgba(236,58,76,.35)", 540, 1500, 600]].forEach(([c, cx, cy, r]) => {
     const g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, c); g.addColorStop(1, "rgba(255,255,255,0)");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
   });
