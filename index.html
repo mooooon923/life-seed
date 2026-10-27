@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="질문 여섯 개에 답하면 나를 복구하는 단어 12개를 발급해드려요.">
+<meta property="og:title" content="나의 인생 시드 문구">
+<meta property="og:description" content="질문 여섯 개에 답하면 나를 복구하는 단어 12개를 발급해드려요.">
+<meta name="theme-color" content="#FBF8F8">
+<title>나의 인생 시드 문구</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* 한 화면 앱: 가운데 폰 폭 컬럼, 단어판만 레드-핑크-버터 그라데이션 카드 */
+* { box-sizing: border-box; }
+body { margin: 0; }
+:root {
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #FBF8F8;
+  --surface: #FFFFFF;
+  --chip: #F2ECED;
+  --line: #EADFE1;
+  --fg: #121014;
+  --muted: #7A6F74;
+  --ink: #0A0A0C;
+  --red: #EC3A4C;
+  --pink: #EB6BAE;
+  --butter: #E7D98A;
+  --font: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font);
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
+}
+.app {
+  max-width: 440px; margin: 0 auto; min-height: 100%;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 28px;
+  display: flex; flex-direction: column;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+button:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.top { height: 40px; display: flex; align-items: center; justify-content: space-between; }
+.icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; margin-left: -10px; }
+.icon-btn svg { width: 22px; height: 22px; }
+.step { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.screen { flex: 1; display: flex; flex-direction: column; }
+h1 { font-size: 28px; line-height: 1.3; font-weight: 700; margin: 28px 0 12px; text-wrap: balance; letter-spacing: -0.02em; }
+.lead { font-size: 15px; line-height: 1.6; color: var(--muted); margin: 0; }
+
+/* 단어판 */
+.board {
+  position: relative; margin-top: 28px; border: 1px solid var(--line); border-radius: 28px;
+  padding: 22px 18px 30px; overflow: hidden; border: 0; color: #fff;
+  background:
+    radial-gradient(120% 70% at 0% 100%, var(--butter) 0%, rgba(231,217,138,0) 55%),
+    radial-gradient(90% 70% at 100% 85%, var(--pink) 0%, rgba(235,107,174,0) 70%),
+    linear-gradient(180deg, var(--red) 0%, #EA4F6E 55%, var(--pink) 100%);
+  box-shadow: 0 24px 50px -24px rgba(236,58,76,.5);
+}
+.board::after {
+  content: ""; position: absolute; left: 50%; bottom: -55%; width: 130%; aspect-ratio: 1;
+  transform: translateX(-50%) scale(var(--glow, .75)); border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,.75) 0%, rgba(255,240,246,.4) 16%, rgba(255,255,255,.12) 36%, rgba(255,255,255,0) 62%);
+  opacity: var(--glow-o, .8); transition: transform 1.2s cubic-bezier(.2,.7,.2,1), opacity 1.2s;
+}
+.board { --glow-o: .35; }
+.board.open { --glow: 1.15; --glow-o: .55; }
+.grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; grid-template-rows: repeat(6, auto); gap: 12px 14px; }
+.word { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.word .n { width: 20px; flex: none; text-align: center; font-size: 15px; color: rgba(255,255,255,.8); font-variant-numeric: tabular-nums; }
+.word .w {
+  flex: 1; min-width: 0; height: 46px; border-radius: 23px; display: grid; place-items: center;
+  background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.28); font-size: 15px; font-weight: 600; white-space: nowrap;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.word .w span { filter: blur(7px); opacity: .7; transition: filter .6s, opacity .6s; transition-delay: var(--d, 0s); }
+.board.open .word .w span { filter: none; opacity: 1; }
+
+.reveal {
+  position: relative; z-index: 2; align-self: center; margin-top: -26px;
+  display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 30px;
+  background: var(--ink); color: #fff; border-radius: 28px; font-size: 17px; font-weight: 600;
+  box-shadow: 0 12px 32px -8px rgba(10,10,12,.45);
+}
+.reveal svg { width: 20px; height: 20px; }
+.hint { text-align: center; color: var(--muted); font-size: 14px; margin: 18px 0 0; }
+.meta { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--muted); margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
+.meta b { color: var(--fg); font-weight: 600; }
+
+.cta { margin-top: auto; padding-top: 28px; display: grid; gap: 10px; }
+.primary, .secondary { height: 56px; border-radius: 28px; font-size: 17px; font-weight: 600; }
+.primary { background: var(--ink); color: #fff; }
+.secondary { background: var(--chip); color: var(--fg); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* 질문 */
+.bar { height: 4px; border-radius: 2px; background: var(--chip); overflow: hidden; margin-top: 8px; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--red), var(--pink)); transition: width .4s; }
+.options { display: grid; gap: 10px; margin-top: 32px; }
+.opt {
+  min-height: 58px; padding: 14px 22px; border-radius: 29px; text-align: left;
+  background: var(--chip); font-size: 16px; font-weight: 500; line-height: 1.4;
+  border: 1px solid transparent; transition: border-color .2s, background .2s;
+}
+.opt:hover { border-color: var(--line); }
+.opt.on { border-color: var(--red); background: rgba(236,58,76,.07); color: var(--red); }
+
+/* 시작 */
+.intro-board .w span { filter: blur(7px); opacity: .7; }
+.toast {
+  box-shadow: 0 8px 24px -10px rgba(13,18,34,.25);
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px);
+  background: var(--chip); border: 1px solid var(--line); padding: 12px 18px; border-radius: 22px; font-size: 14px;
+  opacity: 0; transition: .3s; pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.fade { animation: fade .45s ease both; }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+@media (max-width: 360px) { .word .w { font-size: 14px; } h1 { font-size: 25px; } }
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const Q = [
+  { q: "아침에 눈 뜨자마자 제일 먼저 하는 건?", o: [
+    ["알람 다시 맞추기", ["이불", "스누즈", "미련"]],
+    ["밤사이 온 알림 확인", ["알림", "스크롤", "호기심"]],
+    ["물 한 잔 마시기", ["물컵", "루틴", "햇빛"]],
+    ["오늘 할 일 떠올리기", ["체크리스트", "계획", "커피"]] ] },
+  { q: "주말에 하루가 통으로 비면?", o: [
+    ["집 밖으로 한 발짝도 안 나감", ["소파", "담요", "정주행"]],
+    ["충동적으로 기차표 끊기", ["기차표", "바다", "즉흥"]],
+    ["약속을 몰아서 잡음", ["단톡방", "건배", "수다"]],
+    ["밀린 일 싹 해치우기", ["빨래", "정리함", "해치움"]] ] },
+  { q: "친구가 고민을 털어놓으면?", o: [
+    ["일단 끝까지 들어줌", ["끄덕임", "위로", "경청"]],
+    ["해결책부터 정리해줌", ["해결책", "메모장", "논리"]],
+    ["같이 화내줌", ["분노", "편먹기", "의리"]],
+    ["맛있는 거 사줌", ["떡볶이", "영수증", "다정"]] ] },
+  { q: "카톡에서 제일 많이 치는 말은?", o: [
+    ["ㅋㅋㅋㅋㅋ", ["웃음", "리액션", "장난"]],
+    ["헐 대박", ["감탄", "놀람", "텐션"]],
+    ["오키", ["오케이", "간결", "효율"]],
+    ["고마워", ["감사", "온기", "진심"]] ] },
+  { q: "갑자기 100만 원이 생기면?", o: [
+    ["바로 적금", ["통장", "저축", "미래"]],
+    ["비행기표부터 검색", ["여권", "공항", "노을"]],
+    ["친구들한테 한턱", ["한턱", "회식", "추억"]],
+    ["장바구니 결제", ["장바구니", "택배", "설렘"]] ] },
+  { q: "밤 12시, 나는 보통?", o: [
+    ["이미 자는 중", ["숙면", "꿈", "베개"]],
+    ["영상 하나만 더 보는 중", ["알고리즘", "쇼츠", "새벽"]],
+    ["뭔가 만드는 중", ["작업", "몰입", "아이디어"]],
+    ["생각이 많아지는 중", ["일기", "달빛", "상념"]] ] },
+];
+const PLACE = ["비상금 통장 메모란", "여권 케이스 안쪽", "단톡방 공지", "장바구니 맨 위"];
+
+const $app = document.getElementById("app");
+let answers = [];
+let shared = false;
+
+const icons = {
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.6 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.6 9.6 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+};
+
+function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+function seedOf(ans) {
+  const key = ans.join("");
+  const h = hash(key);
+  const words = [];
+  ans.forEach((a, i) => {
+    const pool = Q[i].o[a][1];
+    const drop = (h >>> (i * 2)) % 3;
+    pool.forEach((w, j) => { if (j !== drop) words.push(w); });
+  });
+  return { words, id: "SEED-" + h.toString(16).toUpperCase().padStart(8, "0").slice(0, 4), place: PLACE[ans[4]] };
+}
+
+function boardHTML(words, cls = "") {
+  return `<div class="board ${cls}" id="board"><div class="grid">${words.map((w, i) =>
+    `<div class="word"><span class="n">${i + 1}</span><div class="w"><span style="--d:${(i * 0.07).toFixed(2)}s">${w}</span></div></div>`
+  ).join("")}</div></div>`;
+}
+
+function intro() {
+  answers = []; shared = false;
+  history.replaceState(null, "", location.pathname + location.search);
+  const sample = ["이불", "기차표", "위로", "웃음", "노을", "몰입", "스누즈", "바다", "경청", "장난", "여권", "아이디어"];
+  $app.innerHTML = `<div class="screen fade">
+    <div class="top"></div>
+    <h1>나의 인생 시드 문구</h1>
+    <p class="lead">나를 복구하는 데 필요한 단어 12개를 발급해드려요. 질문 여섯 개에 답하면 끝나요.</p>
+    ${boardHTML(sample, "intro-board")}
+    <div class="cta"><button class="primary" id="start">발급 시작하기</button></div>
+  </div>`;
+  document.getElementById("start").onclick = () => ask(0);
+}
+
+function ask(i) {
+  const q = Q[i];
+  $app.innerHTML = `<div class="screen fade">
+    <div class="top">
+      <button class="icon-btn" id="back" aria-label="이전">${icons.back}</button>
+      <span class="step">${i + 1} / ${Q.length}</span>
+    </div>
+    <div class="bar"><i style="width:${(i / Q.length) * 100}%"></i></div>
+    <h1>${q.q}</h1>
+    <div class="options">${q.o.map((o, j) =>
+      `<button class="opt${answers[i] === j ? " on" : ""}" data-j="${j}">${o[0]}</button>`).join("")}</div>
+  </div>`;
+  requestAnimationFrame(() => { $app.querySelector(".bar i").style.width = ((i + 1) / Q.length) * 100 + "%"; });
+  document.getElementById("back").onclick = () => (i === 0 ? intro() : ask(i - 1));
+  $app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+    b.classList.add("on");
+    answers[i] = +b.dataset.j;
+    answers.length = i + 1;
+    setTimeout(() => (i + 1 < Q.length ? ask(i + 1) : result()), 220);
+  });
+}
+
+function result() {
+  const s = seedOf(answers);
+  if (!shared) history.replaceState(null, "", "#seed-" + answers.join(""));
+  $app.innerHTML = `<div class="screen fade">
+    <div class="top">
+      <button class="icon-btn" id="home" aria-label="처음으로">${icons.back}</button>
+      <span class="step">${s.id}</span>
+    </div>
+    <h1>${shared ? "친구의 시드 문구가 도착했어요" : "시드 문구를 받아 적으세요"}</h1>
+    <p class="lead">${shared
+      ? "이 단어 12개만 있으면 친구를 언제든 복구할 수 있어요. 순서대로 읽어보세요."
+      : "이 단어들은 지금의 나를 복구하는 유일한 방법이에요. 잃어버리면 월요일 아침의 나만 남으니 두 군데 이상에 보관하세요."}</p>
+    ${boardHTML(s.words)}
+    <button class="reveal" id="reveal">${icons.eye}<span>단어 보기</span></button>
+    <p class="hint" id="hint">주변에 아무도 없는지 확인하세요</p>
+    <div class="meta"><span>추천 보관 장소</span><b>${s.place}</b></div>
+    <div class="cta">${shared
+      ? `<button class="primary" id="mine">내 시드 문구 발급받기</button>`
+      : `<div class="row"><button class="secondary" id="save">이미지 저장</button><button class="secondary" id="copy">링크 복사</button></div>
+         <button class="primary" id="again">다시 발급하기</button>`}</div>
+  </div>`;
+  const board = document.getElementById("board"), btn = document.getElementById("reveal");
+  btn.onclick = () => {
+    const open = board.classList.toggle("open");
+    btn.innerHTML = (open ? icons.eyeOff : icons.eye) + `<span>${open ? "다시 가리기" : "단어 보기"}</span>`;
+    document.getElementById("hint").textContent = open ? "다 적었으면 다시 가려두세요" : "주변에 아무도 없는지 확인하세요";
+  };
+  document.getElementById("home").onclick = intro;
+  if (shared) { document.getElementById("mine").onclick = intro; return; }
+  document.getElementById("again").onclick = intro;
+  document.getElementById("copy").onclick = () => copyLink();
+  document.getElementById("save").onclick = () => saveImage(s);
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+function copyLink() {
+  const url = location.href;
+  navigator.clipboard.writeText(url).then(() => toast("링크를 복사했어요"), () => toast(url));
+}
+
+async function saveImage(s) {
+  try { await document.fonts.ready; } catch (e) {}
+  const W = 1080, H = 1350, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const x = c.getContext("2d"), F = getComputedStyle(document.body).fontFamily;
+  const lg = x.createLinearGradient(0, 0, 0, H);
+  lg.addColorStop(0, "#EC3A4C"); lg.addColorStop(.55, "#EA4F6E"); lg.addColorStop(1, "#EB6BAE");
+  x.fillStyle = lg; x.fillRect(0, 0, W, H);
+  const g = x.createRadialGradient(0, H, 0, 0, H, 820);
+  g.addColorStop(0, "rgba(231,217,138,1)"); g.addColorStop(1, "rgba(231,217,138,0)");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.fillStyle = "#FFFFFF"; x.font = `700 64px ${F}`; x.fillText("나의 인생 시드 문구", 90, 170);
+  x.fillStyle = "rgba(255,255,255,.8)"; x.font = `500 34px ${F}`; x.fillText(s.id + "  ·  보관 장소: " + s.place, 90, 235);
+  s.words.forEach((w, i) => {
+    const col = i < 6 ? 0 : 1, row = i % 6;
+    const px = 90 + col * 460, py = 320 + row * 140;
+    x.fillStyle = "rgba(255,255,255,.8)"; x.font = `500 34px ${F}`; x.textAlign = "center";
+    x.fillText(String(i + 1), px + 20, py + 60);
+    x.fillStyle = "rgba(255,255,255,.22)";
+    x.beginPath(); x.roundRect(px + 60, py, 360, 96, 48); x.fill();
+    x.fillStyle = "#FFFFFF"; x.font = `600 40px ${F}`; x.fillText(w, px + 240, py + 62);
+    x.textAlign = "left";
+  });
+  x.fillStyle = "#FFFFFF"; x.font = `500 30px ${F}`; x.textAlign = "center";
+  x.fillText("주변에 아무도 없는지 확인하세요", W / 2, H - 70);
+  c.toBlob(async blob => {
+    const file = new File([blob], "life-seed.png", { type: "image/png" });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; }
+    } catch (e) { if (e.name === "AbortError") return; }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "life-seed.png"; a.click();
+    toast("이미지를 저장했어요");
+  });
+}
+
+function boot() {
+  const m = location.hash.match(/^#seed-([0-3]{6})$/);
+  if (m) { answers = [...m[1]].map(Number); shared = true; result(); }
+  else intro();
+}
+boot();
+</script>
+</body>
+</html>
