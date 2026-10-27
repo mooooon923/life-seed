@@ -16,14 +16,16 @@
 <title>나의 인생 시드 문구</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
-/* 한 화면 앱: 가운데 폰 폭 컬럼, 단어판만 레드-핑크-버터 그라데이션 카드 */
+/* 한 화면 앱: 화면 뒤에 파스텔 빛 덩어리가 번지고, 단어판과 버튼은 그 위에 뜬 반투명 유리 */
 * { box-sizing: border-box; }
 body { margin: 0; }
 :root {
   padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
   --bg: #FBF8F8;
   --surface: #FFFFFF;
-  --chip: #F2ECED;
+  --chip: rgba(255,255,255,.55);
+  --glass: rgba(255,255,255,.26);
+  --glass-line: rgba(255,255,255,.6);
   --line: #EADFE1;
   --fg: #121014;
   --muted: #7A6F74;
@@ -31,15 +33,31 @@ body { margin: 0; }
   --red: #EC3A4C;
   --pink: #EB6BAE;
   --butter: #E7D98A;
+  --p-pink: #F9B9CF;
+  --p-peach: #FFD2C0;
+  --p-butter: #F7EAB4;
+  --p-lilac: #E9D6F3;
   --font: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
   color-scheme: light;
 }
 html, body { height: 100%; }
 body {
-  background: var(--bg); color: var(--fg); font-family: var(--font);
+  background: var(--bg); position: relative; color: var(--fg); font-family: var(--font);
   -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
 }
+.bgfx { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; background: var(--bg); }
+.bgfx i { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .9; }
+.bgfx .a { width: 70vmax; height: 60vmax; left: -25vmax; top: -20vmax; background: var(--p-pink); animation: f1 20s ease-in-out infinite alternate; }
+.bgfx .b { width: 60vmax; height: 60vmax; right: -30vmax; top: 15vh; background: var(--p-lilac); animation: f2 24s ease-in-out infinite alternate; }
+.bgfx .c { width: 65vmax; height: 50vmax; left: -20vmax; bottom: -22vmax; background: var(--p-butter); animation: f3 28s ease-in-out infinite alternate; }
+.bgfx .d { width: 50vmax; height: 45vmax; right: -15vmax; bottom: -10vmax; background: var(--p-peach); animation: f4 18s ease-in-out infinite alternate; }
+.bgfx .e { width: 44vmax; height: 38vmax; left: 20%; top: 36%; background: rgba(236,58,76,.42); animation: f2 30s ease-in-out infinite alternate-reverse; }
+@keyframes f1 { to { transform: translate(8vmax, 6vmax) scale(1.08); } }
+@keyframes f2 { to { transform: translate(-10vmax, -5vmax) scale(.92); } }
+@keyframes f3 { to { transform: translate(10vmax, -6vmax) scale(1.1); } }
+@keyframes f4 { to { transform: translate(-8vmax, -8vmax) scale(1.12); } }
 .app {
+  position: relative; z-index: 1;
   max-width: 440px; margin: 0 auto; min-height: 100%;
   padding-left: max(20px, env(safe-area-inset-left, 0px));
   padding-right: max(20px, env(safe-area-inset-right, 0px));
@@ -59,27 +77,24 @@ h1 { font-size: 28px; line-height: 1.3; font-weight: 700; margin: 28px 0 12px; t
 /* 단어판 */
 .board {
   position: relative; margin-top: 28px; border: 1px solid var(--line); border-radius: 28px;
-  padding: 22px 18px 30px; overflow: hidden; border: 0; color: #fff;
-  background:
-    radial-gradient(120% 70% at 0% 100%, var(--butter) 0%, rgba(231,217,138,0) 55%),
-    radial-gradient(90% 70% at 100% 85%, var(--pink) 0%, rgba(235,107,174,0) 70%),
-    linear-gradient(180deg, var(--red) 0%, #EA4F6E 55%, var(--pink) 100%);
-  box-shadow: 0 24px 50px -24px rgba(236,58,76,.5);
+  padding: 22px 18px 30px; overflow: hidden; border: 1px solid var(--glass-line); color: var(--fg);
+  background: var(--glass);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
 .board::after {
   content: ""; position: absolute; left: 50%; bottom: -55%; width: 130%; aspect-ratio: 1;
   transform: translateX(-50%) scale(var(--glow, .75)); border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle, rgba(255,255,255,.75) 0%, rgba(255,240,246,.4) 16%, rgba(255,255,255,.12) 36%, rgba(255,255,255,0) 62%);
+  background: radial-gradient(circle, rgba(236,58,76,.55) 0%, rgba(235,107,174,.35) 18%, rgba(247,234,180,.25) 36%, rgba(255,255,255,0) 62%);
   opacity: var(--glow-o, .8); transition: transform 1.2s cubic-bezier(.2,.7,.2,1), opacity 1.2s;
 }
-.board { --glow-o: .35; }
-.board.open { --glow: 1.15; --glow-o: .55; }
+.board { --glow-o: .25; }
+.board.open { --glow: 1.15; --glow-o: .5; }
 .grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; grid-template-rows: repeat(6, auto); gap: 12px 14px; }
 .word { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.word .n { width: 20px; flex: none; text-align: center; font-size: 15px; color: rgba(255,255,255,.8); font-variant-numeric: tabular-nums; }
+.word .n { width: 20px; flex: none; text-align: center; font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .word .w {
   flex: 1; min-width: 0; height: 46px; border-radius: 23px; display: grid; place-items: center;
-  background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.28); font-size: 15px; font-weight: 600; white-space: nowrap;
+  background: rgba(255,255,255,.4); font-size: 15px; font-weight: 600; white-space: nowrap;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .word .w span { filter: blur(7px); opacity: .7; transition: filter .6s, opacity .6s; transition-delay: var(--d, 0s); }
@@ -126,6 +141,7 @@ h1 { font-size: 28px; line-height: 1.3; font-weight: 700; margin: 28px 0 12px; t
 .fade { animation: fade .45s ease both; }
 @keyframes fade { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) {
+  .bgfx i { animation: none; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 @media (max-width: 360px) { .word .w { font-size: 14px; } h1 { font-size: 25px; } }
@@ -133,6 +149,7 @@ h1 { font-size: 28px; line-height: 1.3; font-weight: 700; margin: 28px 0 12px; t
 </head>
 <body>
 
+<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i><i class="e"></i></div>
 <div class="app" id="app"></div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -288,24 +305,24 @@ async function saveImage(s) {
   c.width = W; c.height = H;
   const x = c.getContext("2d"), F = getComputedStyle(document.body).fontFamily;
   const lg = x.createLinearGradient(0, 0, 0, H);
-  lg.addColorStop(0, "#EC3A4C"); lg.addColorStop(.55, "#EA4F6E"); lg.addColorStop(1, "#EB6BAE");
-  x.fillStyle = lg; x.fillRect(0, 0, W, H);
-  const g = x.createRadialGradient(0, H, 0, 0, H, 820);
-  g.addColorStop(0, "rgba(231,217,138,1)"); g.addColorStop(1, "rgba(231,217,138,0)");
-  x.fillStyle = g; x.fillRect(0, 0, W, H);
-  x.fillStyle = "#FFFFFF"; x.font = `700 64px ${F}`; x.fillText("나의 인생 시드 문구", 90, 170);
-  x.fillStyle = "rgba(255,255,255,.8)"; x.font = `500 34px ${F}`; x.fillText(s.id + "  ·  보관 장소: " + s.place, 90, 235);
+  x.fillStyle = "#FBF8F8"; x.fillRect(0, 0, W, H);
+  [["#F9B9CF", 100, 100, 800], ["#E9D6F3", 1050, 500, 700], ["#F7EAB4", 120, 1350, 750], ["#FFD2C0", 1000, 1300, 650], ["rgba(236,58,76,.32)", 450, 750, 520]].forEach(([c, cx, cy, r]) => {
+    const g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, c); g.addColorStop(1, "rgba(255,255,255,0)");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+  });
+  x.fillStyle = "#121014"; x.font = `700 64px ${F}`; x.fillText("나의 인생 시드 문구", 90, 170);
+  x.fillStyle = "#7A6F74"; x.font = `500 34px ${F}`; x.fillText(s.id + "  ·  보관 장소: " + s.place, 90, 235);
   s.words.forEach((w, i) => {
     const col = i < 6 ? 0 : 1, row = i % 6;
     const px = 90 + col * 460, py = 320 + row * 140;
-    x.fillStyle = "rgba(255,255,255,.8)"; x.font = `500 34px ${F}`; x.textAlign = "center";
+    x.fillStyle = "#7A6F74"; x.font = `500 34px ${F}`; x.textAlign = "center";
     x.fillText(String(i + 1), px + 20, py + 60);
-    x.fillStyle = "rgba(255,255,255,.22)";
+    x.fillStyle = "rgba(255,255,255,.55)";
     x.beginPath(); x.roundRect(px + 60, py, 360, 96, 48); x.fill();
-    x.fillStyle = "#FFFFFF"; x.font = `600 40px ${F}`; x.fillText(w, px + 240, py + 62);
+    x.fillStyle = "#121014"; x.font = `600 40px ${F}`; x.fillText(w, px + 240, py + 62);
     x.textAlign = "left";
   });
-  x.fillStyle = "#FFFFFF"; x.font = `500 30px ${F}`; x.textAlign = "center";
+  x.fillStyle = "#7A6F74"; x.font = `500 30px ${F}`; x.textAlign = "center";
   x.fillText("주변에 아무도 없는지 확인하세요", W / 2, H - 70);
   c.toBlob(async blob => {
     const file = new File([blob], "life-seed.png", { type: "image/png" });
